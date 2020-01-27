@@ -1,0 +1,307 @@
+{
+    "Get Endpoint": {
+        "prefix": "get-endpoint",
+        "body": [
+            "<endpoint name=\"${TM_FILENAME_BASE}\" xmlns=\"http://ws.apache.org/ns/synapse\">",
+            "    <http method=\"GET\" uri-template=\"${2:http://example.com/person?name={uri.var.name}}\" />",
+            "</endpoint>"
+        ]
+    },
+    "Post Endpoint": {
+        "prefix": "post-endpoint",
+        "body": [
+            "<endpoint name=\"${TM_FILENAME_BASE}\" xmlns=\"http://ws.apache.org/ns/synapse\">",
+            "    <http method=\"POST\" uri-template=\"${2:http://example.com/person}\" />",
+            "</endpoint>"
+        ]
+    },
+
+    "API": {
+        "prefix": ["api", "service"],
+        "body": [
+            "<api context=\"/${1:api}\" name=\"${2:${TM_FILENAME_BASE}}\" xmlns=\"http://ws.apache.org/ns/synapse\">",
+            "    <resource methods=\"${3|GET,POST|}\" ${4|uri-template=\"/path/{param}\",url-mapping=\"/resource\"|}>",
+            "        <inSequence>",
+            "            $0",
+            "        </inSequence>",
+            "        <outSequence>",
+            "            <send />",
+            "        </outSequence>",
+            "        <faultSequence>",
+            "            <sequence key=\"fault\" />",
+            "        </faultSequence>",
+            "    </resource>",
+            "</api>"
+        ]
+    },
+    "API Resource": {
+        "prefix": ["resource", "api-resource"],
+        "body": [
+            "<resource methods=\"${1|GET,POST|}\" ${2|uri-template=\"/path/{param}\",url-mapping=\"/resource\"|}>",
+            "    <inSequence>",
+            "        $0",
+            "    </inSequence>",
+            "    <outSequence>",
+            "        <send />",
+            "    </outSequence>",
+            "    <faultSequence>",
+            "        <sequence key=\"fault\" />",
+            "    </faultSequence>",
+            "</resource>"
+        ]
+    },
+    "API Handler": {
+        "prefix": ["handler", "api-handler"],
+        "body": [
+            "<handlers>",
+            "    <handler class=\"${1:org.gov.integrations.auth.handlers.BasicAuthKubeSecretsHandler}\">",
+            "        <property name=\"users\" value=\"${2:users}\" />",
+            "    </handler>",
+            "</handlers>"
+        ]
+    },
+    "Sequence": {
+        "prefix": "sequence",
+        "body": [
+            "<sequence name=\"${TM_FILENAME_BASE}\" xmlns=\"http://ws.apache.org/ns/synapse\">",
+            "    $0",
+            "</sequence>"
+        ]
+    },
+
+    "Proxy": {
+        "prefix": ["proxy", "proxy-service"],
+        "body": [
+            "<proxy name=\"${TM_FILENAME_BASE}\" startOnLoad=\"true\" transports=\"https\" xmlns=\"http://ws.apache.org/ns/synapse\">",
+            "    <target faultSequence=\"fault\" endpoint=\"gov:/endpoints/edp_${TM_FILENAME_BASE}.xml\">",
+            "        <inSequence>",
+            "            <sequence key=\"remove_security\" />",
+            "            $0",
+            "        </inSequence>",
+            "        <outSequence>",
+            "            <sequence key=\"remove_security\" />",
+            "            <send />",
+            "        </outSequence>",
+            "    </target>",
+            "    <publishWSDL key=\"gov:/wsdls/wsdl_${TM_FILENAME_BASE}.wsdl\" />",
+            "    <parameter name=\"disableREST\">true</parameter>",
+            "    <parameter name=\"disableSOAP12\">true</parameter>",
+            "</proxy>"
+        ]
+    },
+
+    "Custom Log": {
+        "prefix": "log-custom",
+        "body": [
+            "<log level=\"${1|full,simple,headers,custom|}\" separator=\",\">",
+            "    <property name=\"${2:name}\" ${3|value,expression|}=\"${4:value or expression}\" />",
+            "</log>"
+        ]
+    },
+    "Full Log": {
+        "prefix": "log-full",
+        "body": [
+            "<log level=\"full\" />"
+        ]
+    },
+    "Error Log": {
+        "prefix": "log-error",
+        "body": [
+            "<log level=\"custom\">",
+                "    <property name=\"text\" value=\"${1:An unexpected error occurred}\"/>",
+                "    <property name=\"message\" expression=\"$ctx:ERROR_MESSAGE\"/>",
+                "    <property name=\"code\" expression=\"$ctx:ERROR_CODE\"/>",
+                "    <property name=\"detail\" expression=\"$ctx:ERROR_DETAIL\"/>",
+                "    <property name=\"exception\" expression=\"$ctx:ERROR_EXCEPTION\"/>",
+            "</log>"
+        ]
+    },
+
+    "Property": {
+        "prefix": "property",
+        "body": [
+            "<property name=\"${1:name}\" ${2|value,expression|}=\"${3:value or expression}\" />"
+        ]
+    },
+    "Property URI": {
+        "prefix": "property-uri",
+        "body": [
+            "<property name=\"uri.var.${1:name}\" expression=\"${2|json-eval($.json.xpath),$body/xml/xpath|}\" />"
+        ]
+    },
+
+    "Remove transport headers": {
+        "prefix": "remove-transport-headers",
+        "body": [
+            "<property name=\"TRANSPORT_HEADERS\" action=\"remove\" scope=\"${1|axis2,transport,operation|}\" />"
+        ]
+    },
+    "Remove security": {
+        "prefix": "remove-security",
+        "body": [
+            "<header action=\"remove\" name=\"Authorization\" scope=\"transport\" />"
+        ]
+    },
+    "Authorization Header": {
+        "prefix": "set-authorization-header",
+        "body": [
+            "<header name=\"Authorization\" expression=\"fn:concat('Basic ', base64Encode('$1:$2'))\" scope=\"transport\" />"
+        ]
+    },
+    "Get Property": {
+        "prefix": "get-property",
+        "body": [
+            "get-property('$1')"
+        ]
+    },
+
+    "Call Template": {
+        "prefix": "call-template",
+        "body": [
+            "<call-template target=\"${1:TemplateName}\">",
+            "    <with-param name=\"{2:name}\" value=\"${3:value}\" />",
+            "</call-template>"
+        ]
+    },
+
+    "WSO2 Switch mediator": {
+        "prefix": "wso2-switch-mediator",
+        "body": [
+            "<switch source=\"${1:expression}\">",
+            "    <case regex=\"${2}\">",
+            "        ${3}",
+            "    </case>",
+            "    <default>",
+            "        ${4}",
+            "    </default>",
+            "</switch>"
+        ]
+    },
+    "Header Mediator": {
+        "prefix": "mediator-header",
+        "body": [
+            "<header name=\"${1:name}\" action=\"${2|remove,set|}\" ${4|value,expression|}=\"${5:value or expression}\" scope=\"${3|transport,default|}\" />"
+        ]
+    },
+    "Sequence Mediator": {
+        "prefix": "mediator-sequence",
+        "body": [
+            "<sequence key=\"${1:name}\" />"
+        ]
+    },
+    "ForEach Mediator": {
+        "prefix": "mediator-foreach",
+        "body": [
+            "<foreach expression=\"${1|xpath,json-eval($.jsonpath)|}\" id=\"${2:iteratorID}\">",
+            "    <sequence>",
+            "        $0",
+            "    </sequence>",
+            "</foreach>"
+        ],
+        "description": "https://ei.docs.wso2.com/en/latest/micro-integrator/references/mediators/forEach-Mediator/"
+    },
+    "Iterate Mediator": {
+        "prefix": "mediator-iterate",
+        "body": [
+            "<iterate sequential=${1|false,true|} expression=\"${1}\" id=\"${2}\">",
+            "    <target>",
+            "        <sequence>",
+            "            $0",
+            "        </sequence>",
+            "    </target>",
+            "</iterate>"
+        ],
+        "description": "https://ei.docs.wso2.com/en/latest/micro-integrator/references/mediators/iterate-Mediator/"
+    },
+    "Aggregate Mediator": {
+        "prefix": "mediator-aggregate",
+        "body": [
+            "<aggregate id=\"${1:iteratorID}\">",
+            "    <completeCondition />",
+            "    <onComplete expression=\"\\$body/*[1]\">",
+            "            ${3}",
+            "    </onComplete>",
+            "</aggregate>"
+        ],
+        "description": "https://ei.docs.wso2.com/en/latest/micro-integrator/references/mediators/aggregate-Mediator/"
+    },
+    "Enrich Mediator": {
+        "prefix": "mediator-enrich",
+        "body": [
+            "<enrich>",
+            "    <source type=\"${1|body,envelope,property,custom,inline|}\" ${2|property,xpath|}=\"${3}\" />",
+            "    <target action=\"${4|child,replace|}\" type=\"${5|body,envelope,property,custom|}\" ${6|property,xpath|}=\"${7}\" />",
+            "</enrich>"
+        ],
+        "description": "https://ei.docs.wso2.com/en/latest/micro-integrator/references/mediators/enrich-Mediator/"
+    },
+    "Filter Mediator": {
+        "prefix": "mediator-filter",
+        "body": [
+            "<filter ${1|regex=\"pattern\",source=\"xpath\"|}>",
+            "    <then>",
+            "        ${2}",
+            "    </then>",
+            "    <else>",
+            "        ${3}",
+            "    </else>",
+            "</filter>"
+        ],
+        "description": "https://ei.docs.wso2.com/en/latest/micro-integrator/references/mediators/filter-Mediator/"
+    },
+    "PayloadFactory Mediator": {
+        "prefix": "mediator-payload",
+        "body": [
+            "<payloadFactory media-type=\"${1|xml,json|}\">",
+            "    <format>",
+            "        $0",
+            "    </format>",
+            "    <args>",
+            "        <arg evaluator=\"${2|xml,json|}\" expression=\"$3\" />",
+            "    </args>",
+            "</payloadFactory>"
+        ]
+    },
+    "Script Mediator": {
+        "prefix": "mediator-script",
+        "body": [
+            "<script language=\"js\">",
+            "    <![CDATA[",
+            "        $0",
+            "    ]]>",
+            "</script>"
+        ]
+    },
+    "Call Mediator": {
+        "prefix": "mediator-call",
+        "body": [
+            "<call>",
+            "    <endpoint key=\"gov:/endpoints/$1.xml\" />",
+            "</call>"
+        ]
+    },
+    "XSLT Mediator": {
+        "prefix": "mediator-xslt",
+        "body": [
+            "<xslt key=\"gov:/xslts/${1:name}.xslt\" source=\"${2|$body,xpath|}\" />"
+        ]
+    },
+    "Respond Mediator": {
+        "prefix": "mediator-respond",
+        "body": [
+            "<respond />"
+        ]
+    },
+    "Send Mediator": {
+        "prefix": "mediator-send",
+        "body": [ "<send />" ]
+    },
+    "Send Meditator (with endpoint)": {
+        "prefix": "mediator-send-endpoint",
+        "body": [
+            "<send>",
+            "    <endpoint key=\"gov:/endpoints/$1.xml\" />",
+            "</send>"
+        ]
+    }
+}

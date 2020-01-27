@@ -1,0 +1,22 @@
+{
+    "name": "wso2-integrator-snippets",
+    "displayName": "wso2-integrator-snippets",
+    "description": "",
+    "publisher": "age",
+    "version": "0.0.2",
+    "engines": {
+        "vscode": "^1.41.0"
+    },
+    "categories": [
+        "Snippets"
+    ],
+    "contributes": {
+        "snippets": [
+            {
+                "language": "xml",
+                "path": "./snippets/snippets.json"
+            }
+        ]
+    },
+    "repository":""
+}
