@@ -257,7 +257,7 @@
             "        $0",
             "    </format>",
             "    <args>",
-            "        <arg evaluator=\"${2|xml,json|}\" expression=\"$3\" />",
+            "        <arg evaluator=\"${2|xml,json|}\" expression=\"${3|//xml/path,$.json.path|}\" />",
             "    </args>",
             "</payloadFactory>"
         ]
