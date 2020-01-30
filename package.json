@@ -3,7 +3,11 @@
     "displayName": "wso2-integrator-snippets",
     "description": "",
     "publisher": "age",
-    "version": "0.0.2",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/amamei/wso2-integrator-snippets.git"
+    },
+    "version": "0.0.4",
     "engines": {
         "vscode": "^1.41.0"
     },
@@ -17,6 +21,5 @@
                 "path": "./snippets/snippets.json"
             }
         ]
-    },
-    "repository":""
+    }
 }

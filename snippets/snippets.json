@@ -203,13 +203,24 @@
     "Iterate Mediator": {
         "prefix": "mediator-iterate",
         "body": [
-            "<iterate sequential=${1|false,true|} expression=\"${1}\" id=\"${2}\">",
+            "<iterate sequential=\"${1|false,true|}\" expression=\"${2}\" id=\"${3}\">",
             "    <target>",
             "        <sequence>",
             "            $0",
             "        </sequence>",
             "    </target>",
             "</iterate>"
+        ],
+        "description": "https://ei.docs.wso2.com/en/latest/micro-integrator/references/mediators/iterate-Mediator/"
+    },
+    "Iteration Target": {
+        "prefix": "mediator-iterate-target",
+        "body": [
+            "<target>",
+            "    <sequence>",
+            "        $0",
+            "    </sequence>",
+            "</target>"
         ],
         "description": "https://ei.docs.wso2.com/en/latest/micro-integrator/references/mediators/iterate-Mediator/"
     },
@@ -224,6 +235,14 @@
             "</aggregate>"
         ],
         "description": "https://ei.docs.wso2.com/en/latest/micro-integrator/references/mediators/aggregate-Mediator/"
+    },
+    "Aggregate Mediator Complete Condition": {
+        "prefix": "mediator-aggregate-complete-condition",
+        "body": [
+            "<completeCondition timeout=\"$1\">",
+            "    <messageCount min=\"$2\" max=\"$3\"/>",
+            "</completeCondition>"
+        ]
     },
     "Enrich Mediator": {
         "prefix": "mediator-enrich",
@@ -302,6 +321,18 @@
             "<send>",
             "    <endpoint key=\"gov:/endpoints/$1.xml\" />",
             "</send>"
+        ]
+    },
+    "Change message type to SOAP 1.1": {
+        "prefix": "message-type-soap",
+        "body": [
+            "<property name=\"messageType\" value=\"text/xml\" scope=\"axis2\"/>"
+        ]
+    },
+    "Change message type to JSON": {
+        "prefix": "message-type-json",
+        "body": [
+            "<property name=\"messageType\" value=\"application/json\" scope=\"axis2\"/>"
         ]
     }
 }
