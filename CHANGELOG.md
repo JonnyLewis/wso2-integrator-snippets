@@ -9,3 +9,7 @@
 
 ## # 0.0.4
 - Fixed iterate mediator
+
+## # 0.0.4
+- Added checkpoint
+- Fixed and optimized multiple mediators

@@ -90,10 +90,18 @@
         ]
     },
 
+    "Debug chckpoint": {
+        "prefix": "debug-checkpoint",
+        "body": [
+            "<log level=\"custom\" separator=\"\n\">",
+            "    <property name=\"--- [CHECKPOINT #${1:1}]\" value=\"------------------------------\" />",
+            "</log>"
+        ]
+    },
     "Custom Log": {
         "prefix": "log-custom",
         "body": [
-            "<log level=\"${1|full,simple,headers,custom|}\" separator=\",\">",
+            "<log level=\"${1|full,simple,headers,custom|}\" separator=\"\n\">",
             "    <property name=\"${2:name}\" ${3|value,expression|}=\"${4:value or expression}\" />",
             "</log>"
         ]
@@ -107,7 +115,7 @@
     "Error Log": {
         "prefix": "log-error",
         "body": [
-            "<log level=\"custom\">",
+            "<log level=\"custom\" separator=\"\n\">",
                 "    <property name=\"text\" value=\"${1:An unexpected error occurred}\"/>",
                 "    <property name=\"message\" expression=\"$ctx:ERROR_MESSAGE\"/>",
                 "    <property name=\"code\" expression=\"$ctx:ERROR_CODE\"/>",
@@ -120,13 +128,25 @@
     "Property": {
         "prefix": "property",
         "body": [
-            "<property name=\"${1:name}\" ${2|value,expression|}=\"${3:value or expression}\" />"
+            "<property name=\"${1:name}\" type=\"${2|STRING,INTEGER,BOOLEAN,DOUBLE,FLOAT,LONG,SHORT,OM|}\" ${3|value,expression|}=\"${4:value or expression}\" scope=\"${5|Synapse,Transport,Axis2,axis2-client,Operation,Registry,System|}\" />"
         ]
     },
     "Property URI": {
         "prefix": "property-uri",
         "body": [
             "<property name=\"uri.var.${1:name}\" expression=\"${2|json-eval($.json.xpath),$body/xml/xpath|}\" />"
+        ]
+    },
+    "Save payload to property": {
+        "prefix": "save-payload",
+        "body": [
+            "<property name=\"${1:_payload}\" expression=\"$body\" type=\"OM\" />"
+        ]
+    },
+    "Read payload from property": {
+        "prefix": "save-payload",
+        "body": [
+            "<property name=\"${1:_payload}\" expression=\"$body\" />"
         ]
     },
 
@@ -257,7 +277,7 @@
     "Filter Mediator": {
         "prefix": "mediator-filter",
         "body": [
-            "<filter ${1|regex=\"pattern\",source=\"xpath\"|}>",
+            "<filter ${1|source=\"xpath\" regex=\"pattern\",xpath=\"xpath\"|}>",
             "    <then>",
             "        ${2}",
             "    </then>",
