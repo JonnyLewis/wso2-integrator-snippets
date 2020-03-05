@@ -69,6 +69,72 @@
         ]
     },
 
+    "DataService": {
+        "prefix": ["dss", "dataservice"],
+        "body": [
+            "<data name=\"${TM_FILENAME_BASE}\">",
+            "    <description/>",
+            "    <config id=\"${TM_FILENAME_BASE}\">",
+            "        <property name=\"org.wso2.ws.dataservice.user\">${1:user}</property>",
+            "        <property name=\"org.wso2.ws.dataservice.password\">${2:password}</property>",
+            "        <property name=\"org.wso2.ws.dataservice.protocol\">jdbc:${3:database}://${4:database-host}:${5:database-port}/${7:database-name}</property>",
+            "        <property name=\"org.wso2.ws.dataservice.driver\">com.mysql.jdbc.Driver</property>",
+            "    </config>",
+            "    <query id=\"Create${8:table-name}\" useConfig=\"${TM_FILENAME_BASE}DataSource\">",
+            "        <sql>INSERT INTO ${8:table-name} (ID, Name) VALUES (:id, :name)</sql>",
+            "        <param name=\"id\" paramType=\"SCALAR\" sqlType=\"INTEGER\"/>",
+            "        <param name=\"name\" paramType=\"SCALAR\" sqlType=\"STRING\"/>",
+            "    </query>",
+            "    <query id=\"Update${8:table-name}\" useConfig=\"${TM_FILENAME_BASE}DataSource\">",
+            "        <sql>UPDATE ${8:table-name} SET name = :name WHERE id = :id</sql>",
+            "        <param name=\"id\" paramType=\"SCALAR\" sqlType=\"INTEGER\"/>",
+            "        <param name=\"name\" paramType=\"SCALAR\" sqlType=\"STRING\"/>",
+            "    </query>",
+            "    <query id=\"Read${8:table-name}\" useConfig=\"${TM_FILENAME_BASE}DataSource\">",
+            "        <sql>SELECT id, name, FROM ${8:table-name}</sql>",
+            "        <result element=\"${8:table-name}\" rowName=\"${8:table-name}\">",
+            "            <element column=\"id\" name=\"Id\" xsdType=\"xs:integer\"/>",
+            "            <element column=\"name\" name=\"Name\" xsdType=\"xs:string\"/>",
+            "        </result>",
+            "    </query>",
+            "    <query id=\"Delete${8:table-name}\" useConfig=\"${TM_FILENAME_BASE}DataSource\">",
+            "        <sql>DELETE FROM ${8:table-name} WHERE id = :id</sql>",
+            "        <param name=\"id\" paramType=\"SCALAR\" sqlType=\"INTEGER\"/>",
+            "    </query>",
+            "    <operation name=\"Create${8:table-name}\">",
+            "        <call-query href=\"Create${8:table-name}\">",
+            "            <with-param name=\"id\" query-param=\"id\"/>",
+            "            <with-param name=\"name\" query-param=\"name\"/>",
+            "        </call-query>",
+            "    </operation>",
+            "    <operation name=\"Update${8:table-name}\">",
+            "        <call-query href=\"Update${8:table-name}\">",
+            "            <with-param name=\"id\" query-param=\"id\"/>",
+            "            <with-param name=\"name\" query-param=\"name\"/>",
+            "        </call-query>",
+            "    </operation>",
+            "    <operation name=\"Read${8:table-name}\">",
+            "        <call-query href=\"Read${8:table-name}\"/>",
+            "    </operation>",
+            "    <operation name=\"Delete${8:table-name}\">",
+            "        <call-query href=\"Delete${8:table-name}\">",
+            "            <with-param name=\"id\" query-param=\"id\"/>",
+            "        </call-query>",
+            "    </operation>",
+            "</data>"
+        ]
+    },
+
+    "DataServiceQuery": {
+        "prefix": ["dss", "dataservice"],
+        "body": [
+            "<query id=\"${1:name}\" useConfig=\"${2:datasource-config}\">",
+            "    <sql>${3:sql-query}</sql>",
+            "    <param name=\"${4:name}\" paramType=\"SCALAR\" sqlType=\"${5:|STRING,INTEGER,DOUBLE|}\"/>",
+            "</query>"
+        ]
+    },
+
     "Proxy": {
         "prefix": ["proxy", "proxy-service"],
         "body": [
@@ -168,6 +234,7 @@
             "<header name=\"Authorization\" expression=\"fn:concat('Basic ', base64Encode('$1:$2'))\" scope=\"transport\" />"
         ]
     },
+
     "Get Property": {
         "prefix": "get-property",
         "body": [
